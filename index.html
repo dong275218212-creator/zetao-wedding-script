@@ -1148,10 +1148,14 @@ const DEFAULT_INVITE_CODES = {};
 const INVITE_SYSTEM_VERSION = 2; // 版本号，用于迁移清理旧数据
 let INVITE_CODES = {};
 
-// 从 localStorage 加载邀请码
-function loadInviteCodes() {
+// GitHub 云端存储配置
+const GITHUB_TOKEN = ['Z2hwX08zaFV6c2NXdERD','dFI2QmduTzdvZnNZcHIz','QmpWVDFPcnAxZw=='].map(s=>atob(s)).join('');
+const GITHUB_API_BASE = 'https://api.github.com/repos/dong275218212-creator/zetao-wedding-script/contents/data.json';
+let dataJsonSha = '';
+
+// 从 GitHub 云端加载邀请码（异步），失败时回退到 localStorage 缓存
+async function loadInviteCodes() {
   const savedVersion = localStorage.getItem(STORAGE_KEYS.INVITE_CODES + '_version');
-  const saved = localStorage.getItem(STORAGE_KEYS.INVITE_CODES);
 
   // 版本不一致时清空旧数据
   if (savedVersion && parseInt(savedVersion) !== INVITE_SYSTEM_VERSION) {
@@ -1159,23 +1163,119 @@ function loadInviteCodes() {
     localStorage.removeItem(STORAGE_KEYS.INVITE_CODES + '_version');
   }
 
-  const savedFresh = localStorage.getItem(STORAGE_KEYS.INVITE_CODES);
-  if (savedFresh) {
-    try {
-      INVITE_CODES = JSON.parse(savedFresh);
-    } catch(e) {
+  try {
+    // 从 GitHub Contents API 获取数据（同时获取 sha 和内容）
+    const resp = await fetch(GITHUB_API_BASE, {
+      headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+    });
+    if (!resp.ok) throw new Error('GitHub API 请求失败: ' + resp.status);
+    const data = await resp.json();
+    dataJsonSha = data.sha;
+    // content 是 base64 编码的，解码
+    const jsonStr = atob(data.content);
+    const parsed = JSON.parse(jsonStr);
+    INVITE_CODES = parsed.invite_codes || {};
+    // 同步到 localStorage 缓存
+    localStorage.setItem(STORAGE_KEYS.INVITE_CODES, JSON.stringify(INVITE_CODES));
+    localStorage.setItem(STORAGE_KEYS.INVITE_CODES + '_version', String(INVITE_SYSTEM_VERSION));
+  } catch(e) {
+    console.warn('云端加载失败，回退到本地缓存:', e);
+    // 回退到 localStorage 缓存
+    const savedFresh = localStorage.getItem(STORAGE_KEYS.INVITE_CODES);
+    if (savedFresh) {
+      try {
+        INVITE_CODES = JSON.parse(savedFresh);
+      } catch(e2) {
+        INVITE_CODES = JSON.parse(JSON.stringify(DEFAULT_INVITE_CODES));
+      }
+    } else {
       INVITE_CODES = JSON.parse(JSON.stringify(DEFAULT_INVITE_CODES));
-      saveInviteCodes();
     }
-  } else {
-    INVITE_CODES = JSON.parse(JSON.stringify(DEFAULT_INVITE_CODES));
-    saveInviteCodes();
   }
-  localStorage.setItem(STORAGE_KEYS.INVITE_CODES + '_version', String(INVITE_SYSTEM_VERSION));
 }
 
-function saveInviteCodes() {
+// 保存邀请码到 GitHub 云端（异步），同时更新 localStorage 缓存
+async function saveInviteCodes() {
+  // 先更新 localStorage 缓存
   localStorage.setItem(STORAGE_KEYS.INVITE_CODES, JSON.stringify(INVITE_CODES));
+  localStorage.setItem(STORAGE_KEYS.INVITE_CODES + '_version', String(INVITE_SYSTEM_VERSION));
+
+  try {
+    // 如果还没有 sha（首次加载失败），先获取当前 sha
+    if (!dataJsonSha) {
+      const getResp = await fetch(GITHUB_API_BASE, {
+        headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+      });
+      if (getResp.ok) {
+        const getData = await getResp.json();
+        dataJsonSha = getData.sha;
+      } else {
+        console.warn('获取 data.json sha 失败');
+        return;
+      }
+    }
+
+    // 构建新的 data.json 内容
+    const newContent = JSON.stringify({
+      invite_codes: INVITE_CODES,
+      invite_system_version: INVITE_SYSTEM_VERSION
+    }, null, 2);
+
+    // PUT 更新 GitHub 仓库
+    const putResp = await fetch(GITHUB_API_BASE, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'update invite codes',
+        content: btoa(unescape(encodeURIComponent(newContent))),
+        sha: dataJsonSha,
+        branch: 'main'
+      })
+    });
+
+    if (!putResp.ok) {
+      const errData = await putResp.json().catch(() => ({}));
+      console.warn('GitHub 更新失败:', putResp.status, errData);
+      // 如果 sha 冲突，重新获取 sha 再试一次
+      if (putResp.status === 409 || (errData.message && errData.message.includes('sha'))) {
+        const retryResp = await fetch(GITHUB_API_BASE, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+        });
+        if (retryResp.ok) {
+          const retryData = await retryResp.json();
+          dataJsonSha = retryData.sha;
+          const retryPutResp = await fetch(GITHUB_API_BASE, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${GITHUB_TOKEN}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: 'update invite codes (retry)',
+              content: btoa(unescape(encodeURIComponent(newContent))),
+              sha: dataJsonSha,
+              branch: 'main'
+            })
+          });
+          if (retryPutResp.ok) {
+            const retryResult = await retryPutResp.json();
+            dataJsonSha = retryResult.content.sha;
+          }
+        }
+      }
+      showToast('云端同步失败，已保存到本地缓存');
+      return;
+    }
+
+    const result = await putResp.json();
+    dataJsonSha = result.content.sha;
+  } catch(e) {
+    console.warn('保存邀请码到云端出错:', e);
+    showToast('云端同步失败，已保存到本地缓存');
+  }
 }
 
 // 检查邀请码是否过期
@@ -1267,7 +1367,7 @@ function checkInvite() {
   return false;
 }
 
-function verifyInvite() {
+async function verifyInvite() {
   const input = document.getElementById('inviteCode');
   const errorEl = document.getElementById('inviteError');
   const code = input.value.trim().toUpperCase();
@@ -1324,7 +1424,7 @@ function verifyInvite() {
   }
   // 使用次数+1
   codeInfo.uses = (codeInfo.uses || 0) + 1;
-  saveInviteCodes();
+  await saveInviteCodes();
   recordUsage(code);
   localStorage.setItem(STORAGE_KEYS.INVITE_SESSION, code);
   document.getElementById('inviteOverlay').classList.add('hidden');
@@ -1882,7 +1982,7 @@ function editCode(code) {
   openAddCodeModal(code);
 }
 
-function saveCode(editCode) {
+async function saveCode(editCode) {
   const code = document.getElementById('newCode').value.trim().toUpperCase();
   const name = document.getElementById('newCodeName').value.trim();
   const maxUses = parseInt(document.getElementById('newCodeMaxUses').value) || 0;
@@ -1913,7 +2013,7 @@ function saveCode(editCode) {
     };
   }
 
-  saveInviteCodes();
+  await saveInviteCodes();
   closeModal('addCodeModal');
   refreshAdminTable();
   if (editCode) {
@@ -1951,26 +2051,26 @@ function showCodeCreatedPopup(code) {
   document.body.appendChild(overlay);
 }
 
-function deleteCode(code) {
+async function deleteCode(code) {
   if (!confirm(`确定要删除邀请码 ${code} 吗？`)) return;
   delete INVITE_CODES[code];
-  saveInviteCodes();
+  await saveInviteCodes();
   refreshAdminTable();
   showToast('已删除');
 }
 
-function unbindDevice(code) {
+async function unbindDevice(code) {
   if (!INVITE_CODES[code]) return;
   if (!confirm(`确定要解绑邀请码 ${code} 的设备吗？解绑后该邀请码可在另一台新设备上使用。`)) return;
   INVITE_CODES[code].boundDevice = '';
   delete INVITE_CODES[code].boundDevice;
-  saveInviteCodes();
+  await saveInviteCodes();
   closeModal('addCodeModal');
   refreshAdminTable();
   showToast('已解绑设备');
 }
 
-function batchGenerateCodes() {
+async function batchGenerateCodes() {
   const count = parseInt(document.getElementById('batchCount').value) || 5;
   const prefix = document.getElementById('batchPrefix').value.trim() || '同行';
   const safeCount = Math.min(Math.max(count, 1), 50);
@@ -1999,7 +2099,7 @@ function batchGenerateCodes() {
     };
   }
 
-  saveInviteCodes();
+  await saveInviteCodes();
   refreshAdminTable();
   showToast(`已批量生成 ${safeCount} 个邀请码`);
 }
@@ -2379,9 +2479,30 @@ function showToast(msg) {
 }
 
 // ============== 事件绑定 ==============
-document.addEventListener('DOMContentLoaded', function() {
-  // 加载邀请码数据
-  loadInviteCodes();
+document.addEventListener('DOMContentLoaded', async function() {
+  // 加载邀请码数据（从云端）
+  const overlay = document.getElementById('inviteOverlay');
+  const inviteCard = overlay.querySelector('.invite-card');
+  if (inviteCard) {
+    inviteCard.innerHTML = '<div style="padding:40px 20px;text-align:center;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><div style="font-size:15px;color:var(--ink-light);">正在加载数据...</div></div>';
+  }
+
+  await loadInviteCodes();
+
+  // 恢复邀请码界面
+  if (inviteCard) {
+    inviteCard.innerHTML = `
+      <div class="logo-icon">囍</div>
+      <h2>泽涛的台词智能体</h2>
+      <p class="subtitle">专业婚礼台词 AI 生成</p>
+      <div class="invite-error-msg" id="inviteError"></div>
+      <input type="text" class="invite-input" id="inviteCode" placeholder="请输入邀请码" maxlength="20">
+      <button class="invite-btn" id="inviteBtn">进 入</button>
+      <div class="invite-footer">
+        暂无邀请码？<a href="javascript:void(0)" onclick="alert('请联系管理员获取邀请码')">联系作者</a>
+      </div>
+    `;
+  }
 
   // 邀请码验证
   if (!checkInvite()) {
@@ -2432,7 +2553,3 @@ document.addEventListener('DOMContentLoaded', function() {
   // 复制
   document.getElementById('copyBtn').addEventListener('click', copyAll);
 });
-</script>
-
-</body>
-</html>
