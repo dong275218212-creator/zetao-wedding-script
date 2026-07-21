@@ -1,13 +1,21 @@
 {
   "invite_codes": {
     "ZT-Z8HPE": {
-      "name": "æå¯",
+      "name": "Ã¦ÂÂÃ¥ÂÂ¯",
       "maxUses": 50,
       "expireDays": 30,
       "expireDate": "",
       "uses": 2,
       "createdAt": "2026-07-21",
       "boundDevice": "DEV-KF05XU-MRULWMA2"
+    },
+    "ZT-95YB6": {
+      "name": "林可",
+      "maxUses": 50,
+      "expireDays": 30,
+      "expireDate": "",
+      "uses": 0,
+      "createdAt": "2026-07-21"
     }
   },
   "invite_system_version": 2
