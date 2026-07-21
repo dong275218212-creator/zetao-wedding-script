@@ -1,12 +1,13 @@
 {
   "invite_codes": {
     "ZT-Z8HPE": {
-      "name": "林可",
+      "name": "æå¯",
       "maxUses": 50,
       "expireDays": 30,
       "expireDate": "",
-      "uses": 0,
-      "createdAt": "2026-07-21"
+      "uses": 1,
+      "createdAt": "2026-07-21",
+      "boundDevice": "DEV-KF05XU-MRULWMA2"
     }
   },
   "invite_system_version": 2
