@@ -16,6 +16,14 @@
       "expireDate": "",
       "uses": 0,
       "createdAt": "2026-07-21"
+    },
+    "ZT-ZHL7L": {
+      "name": "泽涛",
+      "maxUses": 50,
+      "expireDays": 30,
+      "expireDate": "",
+      "uses": 0,
+      "createdAt": "2026-07-21"
     }
   },
   "invite_system_version": 2
