@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泽涛的台词智能体</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wine: #8B2635;
+    --wine-light: #A33B4A;
+    --wine-deep: #6B1C28;
+    --gold: #C9A961;
+    --gold-light: #D4BC7E;
+    --gold-deep: #B08E4A;
+    --cream: #FAF7F2;
+    --cream-warm: #F5F0E8;
+    --paper: #FDFBF7;
+    --ink: #2D2A26;
+    --ink-soft: #5A5550;
+    --ink-light: #8A8580;
+    --line: #E8E2D8;
+    --line-gold: rgba(201, 169, 97, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* 顶部标题栏 */
+  .header {
+    background: linear-gradient(135deg, var(--wine-deep) 0%, var(--wine) 50%, var(--wine-light) 100%);
+    color: #fff;
+    padding: 32px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A961' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  .header-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: 0.85;
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+  .header .gold-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin-top: 16px;
+    opacity: 0.6;
+  }
+
+  /* 主容器 */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 40px 60px;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 32px;
+  }
+
+  /* 左侧表单 */
+  .form-panel {
+    background: var(--paper);
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    padding: 28px 24px;
+    height: fit-content;
+    position: sticky;
+    top: 24px;
+    box-shadow: 0 2px 12px rgba(45, 42, 38, 0.04);
+  }
+  .form-panel h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--wine);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line-gold);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-panel h2::before {
+    content: '';
+    width: 3px;
+    height: 18px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .form-group label .required {
+    color: var(--wine);
+    margin-left: 2px;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+  }
+  .form-group textarea {
+    resize: vertical;
+    min-height: 70px;
+    line-height: 1.6;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-hint {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-top: 4px;
+  }
+
+  /* 风格选择 */
+  .style-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .style-option {
+    padding: 10px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    background: #fff;
+  }
+  .style-option:hover {
+    border-color: var(--gold-light);
+  }
+  .style-option.active {
+    border-color: var(--wine);
+    background: rgba(139, 38, 53, 0.04);
+    color: var(--wine);
+    font-weight: 500;
+  }
+  .style-option .style-name {
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .style-option .style-desc {
+    font-size: 11px;
+    opacity: 0.7;
+  }
+
+  /* 生成按钮 */
+  .generate-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--wine) 0%, var(--wine-light) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .generate-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(139, 38, 53, 0.3);
+  }
+  .generate-btn:active {
+    transform: translateY(0);
+  }
+  .generate-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s;
+  }
+  .generate-btn:hover::after {
+    left: 100%;
+  }
+
+  /* 右侧结果区 */
+  .result-panel {
+    background: var(--paper);
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    min-height: 600px;
+    box-shadow: 0 2px 12px rgba(45, 42, 38, 0.04);
+    position: relative;
+  }
+
+  /* 结果区头部 */
+  .result-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .result-header h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--wine);
+  }
+  .result-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .action-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink-soft);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .action-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-deep);
+  }
+  .action-btn.primary {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: #fff;
+  }
+  .action-btn.primary:hover {
+    background: var(--wine-light);
+    border-color: var(--wine-light);
+  }
+
+  /* 空状态 */
+  .empty-state {
+    padding: 80px 40px;
+    text-align: center;
+    color: var(--ink-light);
+  }
+  .empty-state .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  .empty-state p {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  /* 台词内容 */
+  .speech-content {
+    padding: 28px 32px;
+  }
+  .speech-section {
+    margin-bottom: 32px;
+  }
+  .speech-section:last-child {
+    margin-bottom: 0;
+  }
+  .speech-section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--wine);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line-gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .speech-section-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--wine);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .speech-text {
+    font-size: 15px;
+    line-height: 2;
+    color: var(--ink);
+    white-space: pre-wrap;
+    padding: 0 4px;
+  }
+  .speech-text .golden {
+    color: var(--gold-deep);
+    font-style: italic;
+    font-family: 'Noto Serif SC', serif;
+  }
+
+  /* 分段标签 */
+  .segment-label {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    background: rgba(201, 169, 97, 0.1);
+    color: var(--gold-deep);
+    border-radius: 3px;
+    margin-right: 8px;
+    font-weight: 500;
+  }
+
+  /* 页脚 */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--ink-light);
+    font-size: 12px;
+    border-top: 1px solid var(--line);
+    margin-top: 0;
+  }
+
+  /* 响应式 */
+  @media (max-width: 960px) {
+    .main {
+      grid-template-columns: 1fr;
+      padding: 20px;
+    }
+    .form-panel {
+      position: static;
+    }
+    .header {
+      padding: 24px 20px;
+    }
+    .header h1 {
+      font-size: 22px;
+    }
+    /* 移动端标题行：标题和按钮分行显示 */
+    .form-panel h2 {
+      flex-wrap: wrap;
+    }
+    .form-title-actions {
+      width: 100%;
+      margin-left: 0;
+      margin-top: 10px;
+      padding-left: 14px;
+    }
+    .form-title-btn {
+      font-size: 13px;
+      padding: 6px 14px;
+      flex: 1;
+      text-align: center;
+    }
+    /* 移动端结果区标题行 */
+    .result-header {
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .result-actions {
+      width: 100%;
+      justify-content: stretch;
+    }
+    .action-btn {
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
+    }
+  }
+
+  /* 加载动画 */
+  .loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* 复制成功提示 */
+  .toast {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  /* 邀请码蒙层 */
+  .invite-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, var(--wine-deep) 0%, var(--wine) 50%, #7a1f2d 100%);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s, visibility 0.5s;
+  }
+  .invite-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .invite-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A961' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.6;
+  }
+  .invite-card {
+    position: relative;
+    z-index: 1;
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 48px 40px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .invite-card .logo-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: var(--gold);
+    font-family: 'Noto Serif SC', serif;
+  }
+  .invite-card h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    color: var(--wine);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .invite-card .subtitle {
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+  .invite-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: inherit;
+    text-align: center;
+    letter-spacing: 3px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 16px;
+  }
+  .invite-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+  }
+  .invite-input.error {
+    border-color: var(--wine);
+    animation: shake 0.4s;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .invite-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--wine) 0%, var(--wine-light) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 4px;
+  }
+  .invite-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(139, 38, 53, 0.3);
+  }
+  .invite-error-msg {
+    color: var(--wine);
+    font-size: 13px;
+    margin-bottom: 12px;
+    min-height: 18px;
+  }
+  .invite-footer {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+    color: var(--ink-light);
+  }
+  .invite-footer a {
+    color: var(--gold-deep);
+    text-decoration: none;
+  }
+
+  /* 表单标题工具按钮 */
+  .form-title-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+  }
+  .form-title-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border: 1px solid var(--line-gold);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--gold-deep);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .form-title-btn:hover {
+    background: var(--gold);
+    color: #fff;
+    border-color: var(--gold);
+  }
+  .form-panel h2 {
+    display: flex;
+    align-items: center;
+  }
+
+  /* 通用弹窗遮罩 */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-card {
+    background: #fff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 720px;
+    max-height: 85vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    color: var(--wine);
+    letter-spacing: 2px;
+    margin: 0;
+  }
+  .modal-close {
+    cursor: pointer;
+    color: var(--ink-light);
+    font-size: 22px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .modal-close:hover {
+    color: var(--wine);
+  }
+  .modal-body {
+    padding: 24px 28px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .modal-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-soft);
+    transition: all 0.2s;
+  }
+  .modal-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-deep);
+  }
+  .modal-btn.primary {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: #fff;
+  }
+  .modal-btn.primary:hover {
+    background: var(--wine-light);
+    border-color: var(--wine-light);
+  }
+  .modal-btn.danger {
+    color: var(--wine);
+    border-color: #f0d0d4;
+  }
+  .modal-btn.danger:hover {
+    background: var(--wine);
+    color: #fff;
+    border-color: var(--wine);
+  }
+
+  /* 粘贴识别文本框 */
+  .paste-textarea {
+    width: 100%;
+    min-height: 320px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    line-height: 1.7;
+    resize: vertical;
+  }
+  .paste-textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+  }
+  .paste-hint {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+
+  /* 历史记录列表 */
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .history-item {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .history-item:hover {
+    border-color: var(--gold);
+    background: rgba(201, 169, 97, 0.04);
+  }
+  .history-item-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .history-item-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .history-item-meta {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+    display: flex;
+    gap: 12px;
+  }
+  .history-item-meta .tag {
+    display: inline-block;
+    padding: 1px 8px;
+    background: rgba(201, 169, 97, 0.12);
+    color: var(--gold-deep);
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  .history-item-preview {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .history-item-delete {
+    flex-shrink: 0;
+    color: var(--ink-light);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.2s;
+  }
+  .history-item-delete:hover {
+    color: var(--wine);
+    background: rgba(139, 38, 53, 0.06);
+  }
+  .history-empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--ink-light);
+    font-size: 14px;
+  }
+  .history-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--ink-light);
+  }
+
+  /* 管理面板样式增强 */
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .admin-stat-card {
+    background: var(--cream);
+    padding: 14px 10px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .admin-stat-num {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--wine);
+    font-family: 'Noto Serif SC', serif;
+  }
+  .admin-stat-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .admin-stat-card.gold .admin-stat-num {
+    color: var(--gold-deep);
+  }
+
+  .admin-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .admin-add-btn {
+    font-size: 12px;
+    padding: 4px 12px;
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--gold-deep);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .admin-add-btn:hover {
+    background: var(--gold);
+    color: #fff;
+  }
+
+  .admin-code-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .admin-code-table thead {
+    background: var(--cream);
+  }
+  .admin-code-table th {
+    padding: 10px 10px;
+    text-align: left;
+    color: var(--wine);
+    font-weight: 500;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .admin-code-table td {
+    padding: 9px 10px;
+    border-top: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .admin-code-table .code-mono {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--wine);
+    font-weight: 500;
+  }
+  .admin-code-actions {
+    display: flex;
+    gap: 4px;
+  }
+  .admin-code-actions button {
+    padding: 3px 8px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: all 0.2s;
+  }
+  .admin-code-actions button:hover {
+    border-color: var(--gold);
+    color: var(--gold-deep);
+  }
+  .admin-code-actions button.danger:hover {
+    border-color: var(--wine);
+    color: var(--wine);
+    background: rgba(139,38,53,0.04);
+  }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+  }
+  .status-badge.active { background: #e8f5e9; color: #2e7d32; }
+  .status-badge.inactive { background: #f5f5f5; color: #999; }
+  .status-badge.expired { background: #ffebee; color: #c62828; }
+  .status-badge.usedup { background: #fff3e0; color: #e65100; }
+
+  /* 新增/编辑邀请码表单 */
+  .code-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .code-form-grid .full {
+    grid-column: 1 / -1;
+  }
+  .code-form-group label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .code-form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .code-form-group input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+  }
+  .code-form-hint {
+    font-size: 11px;
+    color: var(--ink-light);
+    margin-top: 4px;
+  }
+
+  /* 批量生成区域 */
+  .batch-generate {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--cream);
+    border-radius: 6px;
+    font-size: 12px;
+  }
+  .batch-generate input {
+    width: 60px;
+    padding: 5px 8px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 12px;
+    text-align: center;
+  }
+  .batch-generate button {
+    padding: 5px 12px;
+    border: 1px solid var(--wine);
+    background: var(--wine);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- 邀请码蒙层 -->
+<div class="invite-overlay" id="inviteOverlay">
+  <div class="invite-card">
+    <div class="logo-icon">囍</div>
+    <h2>泽涛的台词智能体</h2>
+    <p class="subtitle">专业婚礼台词 AI 生成</p>
+    <div class="invite-error-msg" id="inviteError"></div>
+    <input type="text" class="invite-input" id="inviteCode" placeholder="请输入邀请码" maxlength="20">
+    <button class="invite-btn" id="inviteBtn">进 入</button>
+    <div class="invite-footer">
+      暂无邀请码？<a href="javascript:void(0)" onclick="alert('请联系管理员获取邀请码')">联系作者</a>
+    </div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>泽涛的台词智能体</h1>
+    <p>AI 驱动 · 输入新人信息，一键生成专业婚礼台词稿</p>
+    <div class="gold-line"></div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- 左侧表单 -->
+  <div class="form-panel">
+    <h2>新人信息
+      <span class="form-title-actions">
+        <button class="form-title-btn" onclick="copyQuestionnaire()">📋 复制问卷模板</button>
+        <button class="form-title-btn" onclick="openPasteModal()">📝 粘贴新人问卷</button>
+      </span>
+    </h2>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>新郎姓名<span class="required">*</span></label>
+        <input type="text" id="groomName" placeholder="如：周予安" value="周予安">
+      </div>
+      <div class="form-group">
+        <label>新娘姓名<span class="required">*</span></label>
+        <input type="text" id="brideName" placeholder="如：林知夏" value="林知夏">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>新郎职业</label>
+        <input type="text" id="groomJob" placeholder="如：建筑设计师" value="建筑设计师">
+      </div>
+      <div class="form-group">
+        <label>新娘职业</label>
+        <input type="text" id="brideJob" placeholder="如：小学老师" value="小学老师">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>相识方式<span class="required">*</span></label>
+      <input type="text" id="meetWay" placeholder="如：朋友聚会、同事、校园、相亲" value="朋友组织的聚会">
+    </div>
+
+    <div class="form-group">
+      <label>相识时间</label>
+      <input type="text" id="meetTime" placeholder="如：2018年、六年前" value="2018年">
+    </div>
+
+    <div class="form-group">
+      <label>第一印象 / 性格反差</label>
+      <textarea id="firstImpression" placeholder="两人对彼此的第一印象，性格差异等">新娘觉得新郎太安静，好像对什么都不感兴趣；新郎觉得新娘很有活力，跟谁都能聊得来。一个安静一个热闹，一个习惯放在心里，一个喜欢表达想法。</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>感情转折点 / 重要故事<span class="required">*</span></label>
+      <textarea id="turningPoint" placeholder="让感情升温的关键事件">新娘第一次带毕业班，工作压力很大，经常怀疑自己。新郎没有说"你一定可以"，而是陪她重新整理课程，晚上一起备课。他说：我不知道怎么解决你的压力，但我想陪你一起面对。</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>共同习惯 / 小细节</label>
+      <textarea id="smallDetail" placeholder="两人之间的小习惯、小约定">每个月最后一天，会一起去吃第一次约会的那家火锅，再忙也尽量不取消。</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>求婚故事</label>
+      <textarea id="proposal" placeholder="求婚的过程和说过的话">去年年底，新郎带新娘回到第一次见面的地方。他说：六年前我觉得我们是两个完全不同的人，后来才发现，正是因为不同，我们才成为彼此最需要的人。</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>台词风格</label>
+      <div class="style-options" id="styleOptions">
+        <div class="style-option active" data-style="justright">
+          <div class="style-name">刚刚好</div>
+          <div class="style-desc">细水长流型</div>
+        </div>
+        <div class="style-option" data-style="emotional">
+          <div class="style-name">情绪稳定</div>
+          <div class="style-desc">成熟稳重型</div>
+        </div>
+        <div class="style-option" data-style="wonderful">
+          <div class="style-name">奇妙</div>
+          <div class="style-desc">缘分天定型</div>
+        </div>
+        <div class="style-option" data-style="firstlove">
+          <div class="style-name">初恋</div>
+          <div class="style-desc">纯粹真挚型</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="generateBtn">
+      <span id="btnText">生成完整台词稿</span>
+    </button>
+  </div>
+
+  <!-- 右侧结果 -->
+  <div class="result-panel">
+    <div class="result-header">
+      <h2>台词稿预览</h2>
+      <div class="result-actions">
+        <button class="action-btn" id="historyBtn">历史</button>
+        <button class="action-btn" id="copyBtn">复制全文</button>
+        <button class="action-btn primary" id="regenerateBtn">换一版</button>
+      </div>
+    </div>
+    <div class="speech-content" id="speechContent">
+      <div class="empty-state">
+        <div class="icon" style="width:48px;height:48px;margin:0 auto 16px;background:linear-gradient(135deg, var(--wine), var(--gold));-webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22black%22><path d=%22M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z%22/></svg>') center/contain no-repeat;mask:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22black%22><path d=%22M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z%22/></svg>') center/contain no-repeat;opacity:0.4;"></div>
+        <p>填写左侧新人信息<br>点击「生成完整台词稿」<br>开场白 + 各环节台词，一键生成</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  泽涛的台词智能体 · AI 生成仅供参考，请根据现场氛围灵活调整
+</div>
+
+<div class="toast" id="toast">已复制到剪贴板</div>
+
+<script>
+// ============== 存储工具 ==============
+const STORAGE_KEYS = {
+  INVITE_CODES: 'zetao_invite_codes',
+  USAGE: 'zetao_usage',
+  HISTORY: 'zetao_history',
+  INVITE_SESSION: 'zetao_invite_session',
+  DEVICE_ID: 'zetao_device_id'
+};
+
+// ============== 邀请码系统 ==============
+const ADMIN_CODE = "ZT-ADMIN-2026";
+
+// 默认邀请码（首次加载时用，之后走 localStorage）——初始为空，所有邀请码通过管理员手动创建
+const DEFAULT_INVITE_CODES = {};
+
+const INVITE_SYSTEM_VERSION = 2; // 版本号，用于迁移清理旧数据
+let INVITE_CODES = {};
+
+// 从 localStorage 加载邀请码
+function loadInviteCodes() {
+  const savedVersion = localStorage.getItem(STORAGE_KEYS.INVITE_CODES + '_version');
+  const saved = localStorage.getItem(STORAGE_KEYS.INVITE_CODES);
+
+  // 版本不一致时清空旧数据
+  if (savedVersion && parseInt(savedVersion) !== INVITE_SYSTEM_VERSION) {
+    localStorage.removeItem(STORAGE_KEYS.INVITE_CODES);
+    localStorage.removeItem(STORAGE_KEYS.INVITE_CODES + '_version');
+  }
+
+  const savedFresh = localStorage.getItem(STORAGE_KEYS.INVITE_CODES);
+  if (savedFresh) {
+    try {
+      INVITE_CODES = JSON.parse(savedFresh);
+    } catch(e) {
+      INVITE_CODES = JSON.parse(JSON.stringify(DEFAULT_INVITE_CODES));
+      saveInviteCodes();
+    }
+  } else {
+    INVITE_CODES = JSON.parse(JSON.stringify(DEFAULT_INVITE_CODES));
+    saveInviteCodes();
+  }
+  localStorage.setItem(STORAGE_KEYS.INVITE_CODES + '_version', String(INVITE_SYSTEM_VERSION));
+}
+
+function saveInviteCodes() {
+  localStorage.setItem(STORAGE_KEYS.INVITE_CODES, JSON.stringify(INVITE_CODES));
+}
+
+// 检查邀请码是否过期
+function isCodeExpired(code) {
+  const info = INVITE_CODES[code];
+  if (!info) return false;
+  // 优先检查具体到期日期
+  if (info.expireDate) {
+    const expDate = new Date(info.expireDate + 'T23:59:59');
+    return new Date() > expDate;
+  }
+  // 再检查天数有效期
+  if (!info.expireDays || info.expireDays === 0) return false;
+  const created = new Date(info.createdAt);
+  const expireDate = new Date(created.getTime() + info.expireDays * 24 * 60 * 60 * 1000);
+  return new Date() > expireDate;
+}
+
+// 检查是否达使用上限
+function isCodeUsedUp(code) {
+  const info = INVITE_CODES[code];
+  if (!info || !info.maxUses || info.maxUses === 0) return false;
+  return info.uses >= info.maxUses;
+}
+
+// 生成随机邀请码
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'ZT-';
+  for (let i = 0; i < 5; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  if (INVITE_CODES[code]) return generateInviteCode();
+  return code;
+}
+
+// 获取今天日期字符串
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ============== 设备指纹 ==============
+function getDeviceId() {
+  let deviceId = localStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+  if (deviceId) return deviceId;
+  // 生成设备指纹：综合浏览器特征
+  const ua = navigator.userAgent || '';
+  const screen = (window.screen?.width || 0) + 'x' + (window.screen?.height || 0);
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  const lang = navigator.language || '';
+  const platform = navigator.platform || '';
+  const raw = ua + '|' + screen + '|' + tz + '|' + lang + '|' + platform + '|' + Math.random();
+  // 简单哈希
+  let hash = 0;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw.charCodeAt(i);
+    hash = ((hash << 5) - hash) + ch;
+    hash |= 0;
+  }
+  deviceId = 'DEV-' + Math.abs(hash).toString(36).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+  localStorage.setItem(STORAGE_KEYS.DEVICE_ID, deviceId);
+  return deviceId;
+}
+
+// ============== 邀请码验证 ==============
+function checkInvite() {
+  const saved = localStorage.getItem(STORAGE_KEYS.INVITE_SESSION);
+  if (!saved) return false;
+  const code = saved.toUpperCase();
+  if (code === ADMIN_CODE) {
+    document.getElementById('inviteOverlay').classList.add('hidden');
+    showAdminPanel();
+    return true;
+  }
+  if (INVITE_CODES[code] && !isCodeExpired(code) && !isCodeUsedUp(code)) {
+    // 检查设备绑定
+    const info = INVITE_CODES[code];
+    if (info.boundDevice && info.boundDevice !== getDeviceId()) {
+      // 设备不匹配，清除会话
+      localStorage.removeItem(STORAGE_KEYS.INVITE_SESSION);
+      return false;
+    }
+    document.getElementById('inviteOverlay').classList.add('hidden');
+    return true;
+  }
+  // 过期或用完了，清掉
+  localStorage.removeItem(STORAGE_KEYS.INVITE_SESSION);
+  return false;
+}
+
+function verifyInvite() {
+  const input = document.getElementById('inviteCode');
+  const errorEl = document.getElementById('inviteError');
+  const code = input.value.trim().toUpperCase();
+
+  if (!code) {
+    errorEl.textContent = '请输入邀请码';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    return;
+  }
+
+  if (code === ADMIN_CODE) {
+    localStorage.setItem(STORAGE_KEYS.INVITE_SESSION, code);
+    document.getElementById('inviteOverlay').classList.add('hidden');
+    errorEl.textContent = '';
+    showAdminPanel();
+    return;
+  }
+
+  if (!INVITE_CODES[code]) {
+    errorEl.textContent = '邀请码无效，请检查后重试';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    return;
+  }
+
+  if (isCodeExpired(code)) {
+    errorEl.textContent = '邀请码已过期，请联系管理员';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    return;
+  }
+
+  if (isCodeUsedUp(code)) {
+    errorEl.textContent = '邀请码使用次数已用完';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    return;
+  }
+
+  // 检查设备绑定
+  const currentDevice = getDeviceId();
+  const codeInfo = INVITE_CODES[code];
+  if (codeInfo.boundDevice && codeInfo.boundDevice !== currentDevice) {
+    errorEl.textContent = '该邀请码已绑定其他设备，每台设备仅可使用一个邀请码';
+    input.classList.add('error');
+    setTimeout(() => input.classList.remove('error'), 400);
+    return;
+  }
+
+  // 验证通过，绑定设备（首次使用时绑定）
+  if (!codeInfo.boundDevice) {
+    codeInfo.boundDevice = currentDevice;
+  }
+  // 使用次数+1
+  codeInfo.uses = (codeInfo.uses || 0) + 1;
+  saveInviteCodes();
+  recordUsage(code);
+  localStorage.setItem(STORAGE_KEYS.INVITE_SESSION, code);
+  document.getElementById('inviteOverlay').classList.add('hidden');
+  errorEl.textContent = '';
+}
+
+function recordUsage(code) {
+  let records = JSON.parse(localStorage.getItem(STORAGE_KEYS.USAGE) || '[]');
+  records.push({
+    code: code,
+    name: INVITE_CODES[code]?.name || '未知',
+    time: new Date().toISOString()
+  });
+  // 最多保存 200 条
+  if (records.length > 200) records = records.slice(-200);
+  localStorage.setItem(STORAGE_KEYS.USAGE, JSON.stringify(records));
+}
+
+// ============== 新人问卷 ==============
+const QUESTIONNAIRE_TEMPLATE = `【新人信息采集表】
+
+请填写以下信息，我们将为您定制专属婚礼台词：
+
+1. 新郎姓名：
+2. 新娘姓名：
+3. 新郎职业：
+4. 新娘职业：
+5. 相识方式：
+6. 相识时间：
+7. 第一印象 / 性格反差：
+8. 感情转折点 / 重要故事：
+9. 共同习惯 / 小细节：
+10. 求婚故事：
+11. 台词风格（刚刚好/情绪稳定/奇妙/初恋）：
+
+感谢您的配合，期待为您呈现一场动人的婚礼。`;
+
+function copyQuestionnaire() {
+  navigator.clipboard.writeText(QUESTIONNAIRE_TEMPLATE).then(() => {
+    showToast('问卷模板已复制，发给新人填写吧');
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = QUESTIONNAIRE_TEMPLATE;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('问卷模板已复制，发给新人填写吧');
+  });
+}
+
+// 粘贴识别弹窗
+function openPasteModal() {
+  closeModal('pasteModal');
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'pasteModal';
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal('pasteModal'); };
+
+  overlay.innerHTML = `
+    <div class="modal-card" style="max-width:560px;">
+      <div class="modal-header">
+        <h3>粘贴新人问卷</h3>
+        <span class="modal-close" onclick="closeModal('pasteModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="paste-hint">
+          将新人填好的问卷粘贴到下方，系统将自动识别并填充表单。<br>
+          支持格式：<code style="background:#f5f0e8;padding:1px 6px;border-radius:3px;">关键词：内容</code> 或 <code style="background:#f5f0e8;padding:1px 6px;border-radius:3px;">关键词: 内容</code>
+        </div>
+        <textarea class="paste-textarea" id="pasteTextarea" placeholder="在这里粘贴新人问卷内容..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn" onclick="closeModal('pasteModal')">取消</button>
+        <button class="modal-btn primary" onclick="parsePastedContent()">识别并填充</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('pasteTextarea').focus(), 100);
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function parsePastedContent() {
+  const text = document.getElementById('pasteTextarea').value.trim();
+  if (!text) {
+    showToast('请先粘贴问卷内容');
+    return;
+  }
+
+  // 字段映射：关键词数组 -> 表单字段ID
+  const fieldMap = [
+    { keys: ['新郎姓名', '新郎名字', '新郎'], id: 'groomName' },
+    { keys: ['新娘姓名', '新娘名字', '新娘'], id: 'brideName' },
+    { keys: ['新郎职业', '新郎工作'], id: 'groomJob' },
+    { keys: ['新娘职业', '新娘工作'], id: 'brideJob' },
+    { keys: ['相识方式', '怎么认识', '认识方式', '相遇方式'], id: 'meetWay' },
+    { keys: ['相识时间', '认识时间', '在一起多久', '恋爱时长', '相识多久'], id: 'meetTime' },
+    { keys: ['第一印象', '性格反差', '印象'], id: 'firstImpression' },
+    { keys: ['感情转折点', '重要故事', '最难忘', '感动的事', '转折点'], id: 'turningPoint' },
+    { keys: ['共同习惯', '小细节', '小习惯', '日常细节'], id: 'smallDetail' },
+    { keys: ['求婚故事', '求婚过程', '求婚', '怎么求婚'], id: 'proposal' },
+    { keys: ['台词风格', '风格', '喜欢的风格'], id: 'style', isStyle: true }
+  ];
+
+  let matchedCount = 0;
+
+  fieldMap.forEach(field => {
+    for (const key of field.keys) {
+      // 匹配 关键词：内容 / 关键词: 内容 / 关键词 内容 / 1. 关键词：内容
+      const regex = new RegExp(
+        `(?:^|\\n|\\d+[.、\\s]+)${key}\\s*[:：\\s]\\s*([^\\n]+)`,
+        'i'
+      );
+      const match = text.match(regex);
+      if (match && match[1].trim()) {
+        const value = match[1].trim();
+        if (field.isStyle) {
+          // 风格特殊处理
+          setStyleByName(value);
+        } else {
+          const el = document.getElementById(field.id);
+          if (el) el.value = value;
+        }
+        matchedCount++;
+        break;
+      }
+    }
+  });
+
+  closeModal('pasteModal');
+  showToast(`已识别 ${matchedCount} 个字段`);
+}
+
+function setStyleByName(styleName) {
+  const styleMap = {
+    '刚刚好': 'justright',
+    '细水长流': 'justright',
+    '情绪稳定': 'emotional',
+    '成熟稳重': 'emotional',
+    '奇妙': 'wonderful',
+    '缘分天定': 'wonderful',
+    '初恋': 'firstlove',
+    '纯粹真挚': 'firstlove'
+  };
+
+  let targetStyle = 'justright';
+  for (const [key, val] of Object.entries(styleMap)) {
+    if (styleName.includes(key)) {
+      targetStyle = val;
+      break;
+    }
+  }
+
+  document.querySelectorAll('.style-option').forEach(opt => {
+    opt.classList.remove('active');
+    if (opt.dataset.style === targetStyle) opt.classList.add('active');
+  });
+}
+
+// ============== 历史记录 ==============
+const MAX_HISTORY = 20;
+
+function saveHistory(speechHtml) {
+  const formData = {
+    groomName: document.getElementById('groomName').value,
+    brideName: document.getElementById('brideName').value,
+    groomJob: document.getElementById('groomJob').value,
+    brideJob: document.getElementById('brideJob').value,
+    meetWay: document.getElementById('meetWay').value,
+    meetTime: document.getElementById('meetTime').value,
+    firstImpression: document.getElementById('firstImpression').value,
+    turningPoint: document.getElementById('turningPoint').value,
+    smallDetail: document.getElementById('smallDetail').value,
+    proposal: document.getElementById('proposal').value,
+    style: getCurrentStyle()
+  };
+
+  const styleNameMap = {
+    justright: '刚刚好',
+    emotional: '情绪稳定',
+    wonderful: '奇妙',
+    firstlove: '初恋'
+  };
+
+  // 提取纯文本前50字作为预览
+  const temp = document.createElement('div');
+  temp.innerHTML = speechHtml;
+  const plainText = temp.innerText.replace(/\s+/g, '').slice(0, 50);
+
+  const record = {
+    id: Date.now(),
+    time: new Date().toISOString(),
+    groomName: formData.groomName,
+    brideName: formData.brideName,
+    style: formData.style,
+    styleName: styleNameMap[formData.style] || '刚刚好',
+    formData: formData,
+    speechContent: speechHtml,
+    preview: plainText
+  };
+
+  let history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || '[]');
+  history.unshift(record);
+  if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+  localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
+}
+
+function getCurrentStyle() {
+  const active = document.querySelector('.style-option.active');
+  return active ? active.dataset.style : 'justright';
+}
+
+function openHistoryModal() {
+  closeModal('historyModal');
+  const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || '[]');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'historyModal';
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal('historyModal'); };
+
+  const listHtml = history.length === 0
+    ? '<div class="history-empty">暂无历史记录<br>生成台词后会自动保存在这里</div>'
+    : `<div class="history-list">
+        ${history.map(item => {
+          const t = new Date(item.time);
+          const timeStr = `${t.getFullYear()}/${String(t.getMonth()+1).padStart(2,'0')}/${String(t.getDate()).padStart(2,'0')} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+          return `
+            <div class="history-item" onclick="restoreHistory(${item.id})">
+              <div class="history-item-info">
+                <div class="history-item-title">${item.groomName || '新郎'} & ${item.brideName || '新娘'}</div>
+                <div class="history-item-meta">
+                  <span>${timeStr}</span>
+                  <span class="tag">${item.styleName || '刚刚好'}</span>
+                </div>
+                <div class="history-item-preview">${item.preview || ''}...</div>
+              </div>
+              <div class="history-item-delete" onclick="event.stopPropagation();deleteHistory(${item.id})">×</div>
+            </div>
+          `;
+        }).join('')}
+      </div>`;
+
+  overlay.innerHTML = `
+    <div class="modal-card" style="max-width:560px;">
+      <div class="modal-header">
+        <h3>历史记录</h3>
+        <span class="modal-close" onclick="closeModal('historyModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        ${listHtml}
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <span style="font-size:12px;color:var(--ink-light);">共 ${history.length} 条记录（最多保存 ${MAX_HISTORY} 条）</span>
+        <div style="display:flex;gap:8px;">
+          ${history.length > 0 ? '<button class="modal-btn danger" onclick="clearAllHistory()">清空全部</button>' : ''}
+          <button class="modal-btn" onclick="closeModal('historyModal')">关闭</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+}
+
+function restoreHistory(id) {
+  const history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || '[]');
+  const record = history.find(h => h.id === id);
+  if (!record) return;
+
+  // 恢复表单
+  const fd = record.formData;
+  document.getElementById('groomName').value = fd.groomName || '';
+  document.getElementById('brideName').value = fd.brideName || '';
+  document.getElementById('groomJob').value = fd.groomJob || '';
+  document.getElementById('brideJob').value = fd.brideJob || '';
+  document.getElementById('meetWay').value = fd.meetWay || '';
+  document.getElementById('meetTime').value = fd.meetTime || '';
+  document.getElementById('firstImpression').value = fd.firstImpression || '';
+  document.getElementById('turningPoint').value = fd.turningPoint || '';
+  document.getElementById('smallDetail').value = fd.smallDetail || '';
+  document.getElementById('proposal').value = fd.proposal || '';
+
+  // 恢复风格
+  document.querySelectorAll('.style-option').forEach(opt => {
+    opt.classList.remove('active');
+    if (opt.dataset.style === fd.style) opt.classList.add('active');
+  });
+
+  // 显示台词
+  document.getElementById('speechContent').innerHTML = record.speechContent;
+
+  closeModal('historyModal');
+  showToast('已恢复历史记录');
+}
+
+function deleteHistory(id) {
+  let history = JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || '[]');
+  history = history.filter(h => h.id !== id);
+  localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
+  openHistoryModal(); // 刷新
+}
+
+function clearAllHistory() {
+  if (!confirm('确定要清空所有历史记录吗？此操作不可恢复。')) return;
+  localStorage.removeItem(STORAGE_KEYS.HISTORY);
+  closeModal('historyModal');
+  showToast('已清空历史记录');
+}
+
+// ============== 增强版管理员面板 ==============
+function showAdminPanel() {
+  // 已有就不重复创建
+  if (document.getElementById('adminBtn')) return;
+  const btn = document.createElement('div');
+  btn.id = 'adminBtn';
+  btn.innerHTML = '⚙ 管理';
+  btn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9998;background:linear-gradient(135deg,#8b2635,#a03948);color:#fff;padding:10px 18px;border-radius:24px;cursor:pointer;font-size:13px;box-shadow:0 4px 16px rgba(139,38,53,0.3);transition:all 0.3s;letter-spacing:1px;';
+  btn.onmouseover = () => btn.style.transform = 'translateY(-2px)';
+  btn.onmouseout = () => btn.style.transform = 'translateY(0)';
+  btn.onclick = openAdminPanel;
+  document.body.appendChild(btn);
+}
+
+function openAdminPanel() {
+  closeModal('adminModal');
+  const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.USAGE) || '[]');
+  const totalCodes = Object.keys(INVITE_CODES).length;
+  const usedCodes = Object.entries(INVITE_CODES).filter(([c, i]) => i.uses > 0).length;
+  const expiredCodes = Object.keys(INVITE_CODES).filter(c => isCodeExpired(c)).length;
+  const totalUses = Object.values(INVITE_CODES).reduce((sum, i) => sum + (i.uses || 0), 0);
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'adminModal';
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal('adminModal'); };
+
+  overlay.innerHTML = `
+    <div class="modal-card" style="max-width:820px;">
+      <div class="modal-header">
+        <h3>管理员面板</h3>
+        <span class="modal-close" onclick="closeModal('adminModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <!-- 数据统计 -->
+        <div class="admin-stats">
+          <div class="admin-stat-card">
+            <div class="admin-stat-num">${totalCodes}</div>
+            <div class="admin-stat-label">总邀请码</div>
+          </div>
+          <div class="admin-stat-card gold">
+            <div class="admin-stat-num">${usedCodes}</div>
+            <div class="admin-stat-label">已激活</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-num" style="color:#c62828;">${expiredCodes}</div>
+            <div class="admin-stat-label">已过期</div>
+          </div>
+          <div class="admin-stat-card gold">
+            <div class="admin-stat-num">${totalUses}</div>
+            <div class="admin-stat-label">总使用次数</div>
+          </div>
+        </div>
+
+        <!-- 邀请码管理 -->
+        <div style="margin-bottom:24px;">
+          <div class="admin-section-title">
+            <span>邀请码管理</span>
+            <button class="admin-add-btn" onclick="openAddCodeModal()">+ 新增邀请码</button>
+          </div>
+          <div style="max-height:280px;overflow-y:auto;">
+            <table class="admin-code-table">
+              <thead>
+                <tr>
+                  <th>邀请码</th>
+                  <th>持有人</th>
+                  <th>使用次数</th>
+                  <th>有效期</th>
+                  <th>绑定设备</th>
+                  <th>创建时间</th>
+                  <th>状态</th>
+                  <th style="text-align:right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="adminCodeTableBody">
+                ${renderCodeTableRows()}
+              </tbody>
+            </table>
+          </div>
+          <div class="batch-generate">
+            <span>批量生成：</span>
+            <input type="number" id="batchCount" value="5" min="1" max="50">
+            <span>个，持有人前缀：</span>
+            <input type="text" id="batchPrefix" value="同行" style="width:80px;">
+            <button onclick="batchGenerateCodes()">批量生成</button>
+          </div>
+        </div>
+
+        <!-- 最近访问记录 -->
+        <div>
+          <div class="admin-section-title">
+            <span>最近访问记录</span>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:6px;max-height:180px;overflow-y:auto;">
+            ${records.length === 0 ? '<div style="padding:24px;text-align:center;color:var(--ink-light);font-size:13px;">暂无记录</div>' :
+              records.slice(-15).reverse().map(r => {
+                const t = new Date(r.time);
+                const timeStr = `${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+                return `<div style="padding:8px 14px;border-bottom:1px solid #f5f5f5;font-size:12.5px;display:flex;justify-content:space-between;">
+                  <span><span style="font-family:monospace;color:var(--wine);font-weight:500;">${r.code}</span> &nbsp;·&nbsp; ${r.name}</span>
+                  <span style="color:var(--ink-light);">${timeStr}</span>
+                </div>`;
+              }).join('')
+            }
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn" onclick="logoutAdmin()">退出登录</button>
+        <button class="modal-btn" onclick="copyAllCodes()">复制全部邀请码</button>
+        <button class="modal-btn primary" onclick="closeModal('adminModal')">完成</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+}
+
+function renderCodeTableRows() {
+  const codes = Object.entries(INVITE_CODES).sort((a, b) => {
+    // 按创建时间倒序
+    return new Date(b[1].createdAt) - new Date(a[1].createdAt);
+  });
+
+  return codes.map(([code, info]) => {
+    const expired = isCodeExpired(code);
+    const usedUp = isCodeUsedUp(code);
+    const active = info.uses > 0 && !expired && !usedUp;
+
+    let statusClass = 'inactive';
+    let statusText = '未激活';
+    if (expired) { statusClass = 'expired'; statusText = '已过期'; }
+    else if (usedUp) { statusClass = 'usedup'; statusText = '已用完'; }
+    else if (active) { statusClass = 'active'; statusText = '使用中'; }
+
+    const usesText = info.maxUses > 0 ? `${info.uses}/${info.maxUses}` : `${info.uses}/不限`;
+    let expireText = '永久';
+    if (info.expireDate) {
+      expireText = `至 ${info.expireDate}`;
+    } else if (info.expireDays > 0) {
+      expireText = `${info.expireDays}天`;
+    }
+
+    const deviceText = info.boundDevice ? `<span style="font-size:10px;font-family:monospace;background:#f0ebe3;padding:2px 6px;border-radius:3px;" title="${info.boundDevice}">已绑定</span>` : '<span style="font-size:11px;color:var(--ink-light);">未绑定</span>';
+
+    return `
+      <tr>
+        <td class="code-mono">${code}</td>
+        <td>${info.name}</td>
+        <td>${usesText}</td>
+        <td>${expireText}</td>
+        <td>${deviceText}</td>
+        <td style="font-size:11px;color:var(--ink-light);">${info.createdAt || '-'}</td>
+        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+        <td style="text-align:right;">
+          <div class="admin-code-actions" style="justify-content:flex-end;">
+            <button onclick="editCode('${code}')">编辑</button>
+            <button class="danger" onclick="deleteCode('${code}')">删除</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function refreshAdminTable() {
+  const tbody = document.getElementById('adminCodeTableBody');
+  if (tbody) tbody.innerHTML = renderCodeTableRows();
+}
+
+// 新增/编辑邀请码弹窗
+function openAddCodeModal(editCode) {
+  const isEdit = !!editCode;
+  const info = isEdit ? INVITE_CODES[editCode] : null;
+  const defaultCode = isEdit ? editCode : generateInviteCode();
+
+  closeModal('addCodeModal');
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'addCodeModal';
+  overlay.style.zIndex = '10001';
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal('addCodeModal'); };
+
+  overlay.innerHTML = `
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <h3>${isEdit ? '编辑邀请码' : '新增邀请码'}</h3>
+        <span class="modal-close" onclick="closeModal('addCodeModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="code-form-grid">
+          <div class="code-form-group full">
+            <label>邀请码</label>
+            <input type="text" id="newCode" value="${defaultCode}" ${isEdit ? 'readonly style="background:#f5f5f5;"' : ''}>
+            ${!isEdit ? '<div class="code-form-hint">可自定义，建议格式 ZT-XXXXX</div>' : ''}
+          </div>
+          <div class="code-form-group full">
+            <label>持有人姓名</label>
+            <input type="text" id="newCodeName" value="${info?.name || ''}" placeholder="如：同行-小明">
+          </div>
+          <div class="code-form-group">
+            <label>最大使用次数</label>
+            <input type="number" id="newCodeMaxUses" value="${info?.maxUses ?? 50}" min="0">
+            <div class="code-form-hint">0 = 不限次数，默认 50 次</div>
+          </div>
+          <div class="code-form-group">
+            <label>有效期（天）</label>
+            <input type="number" id="newCodeExpire" value="${info?.expireDays ?? 30}" min="0">
+            <div class="code-form-hint">0 = 永久有效，默认 30 天</div>
+          </div>
+          <div class="code-form-group full">
+            <label>到期日期（可选，优先级高于天数）</label>
+            <input type="date" id="newCodeExpireDate" value="${info?.expireDate || ''}" style="width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div class="code-form-hint">设置具体到期日，留空则按上方天数计算</div>
+          </div>
+          <div class="code-form-group full">
+            <label>当前已使用次数${isEdit ? ' <span style="color:var(--wine);font-weight:600;">（当前：' + (info?.uses || 0) + ' 次）</span>' : ''}</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="number" id="newCodeUses" value="${info?.uses || 0}" min="0" style="flex:1;">
+              ${isEdit ? '<button onclick="document.getElementById(\'newCodeUses\').value=0;showToast(\'已重置为0\')" style="padding:6px 14px;border:1px solid var(--gold);border-radius:4px;background:#fff;color:var(--gold-deep);cursor:pointer;font-size:12px;white-space:nowrap;">重置为0</button>' : ''}
+            </div>
+            <div class="code-form-hint">可手动调整已使用次数</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        ${isEdit && info?.boundDevice ? '<button class="modal-btn" style="color:var(--wine);border-color:var(--wine);" onclick="unbindDevice(\'' + editCode + '\')">解绑设备</button>' : ''}
+        <button class="modal-btn" onclick="closeModal('addCodeModal')">取消</button>
+        <button class="modal-btn primary" onclick="saveCode('${isEdit ? editCode : ''}')">${isEdit ? '保存修改' : '创建'}</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+}
+
+function editCode(code) {
+  openAddCodeModal(code);
+}
+
+function saveCode(editCode) {
+  const code = document.getElementById('newCode').value.trim().toUpperCase();
+  const name = document.getElementById('newCodeName').value.trim();
+  const maxUses = parseInt(document.getElementById('newCodeMaxUses').value) || 0;
+  const expireDays = parseInt(document.getElementById('newCodeExpire').value) || 0;
+  const expireDate = document.getElementById('newCodeExpireDate').value || '';
+  const uses = parseInt(document.getElementById('newCodeUses').value) || 0;
+
+  if (!code) { showToast('请输入邀请码'); return; }
+  if (!name) { showToast('请输入持有人姓名'); return; }
+
+  if (editCode) {
+    // 编辑
+    INVITE_CODES[editCode].name = name;
+    INVITE_CODES[editCode].maxUses = maxUses;
+    INVITE_CODES[editCode].expireDays = expireDays;
+    INVITE_CODES[editCode].expireDate = expireDate;
+    INVITE_CODES[editCode].uses = uses;
+  } else {
+    // 新增
+    if (INVITE_CODES[code]) { showToast('该邀请码已存在'); return; }
+    INVITE_CODES[code] = {
+      name: name,
+      maxUses: maxUses,
+      expireDays: expireDays,
+      expireDate: expireDate,
+      uses: uses,
+      createdAt: todayStr()
+    };
+  }
+
+  saveInviteCodes();
+  closeModal('addCodeModal');
+  refreshAdminTable();
+  if (editCode) {
+    showToast('已保存修改');
+  } else {
+    showCodeCreatedPopup(code);
+  }
+}
+
+// 新建邀请码成功后弹窗，带一键复制按钮
+function showCodeCreatedPopup(code) {
+  closeModal('codeCreatedModal');
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'codeCreatedModal';
+  overlay.style.zIndex = '10002';
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal('codeCreatedModal'); };
+
+  overlay.innerHTML = `
+    <div class="modal-card" style="max-width:400px;text-align:center;">
+      <div class="modal-header">
+        <h3>✅ 邀请码创建成功</h3>
+        <span class="modal-close" onclick="closeModal('codeCreatedModal')">&times;</span>
+      </div>
+      <div class="modal-body" style="padding:24px 20px;">
+        <div style="font-size:13px;color:var(--ink-light);margin-bottom:12px;">请将以下邀请码发给对方</div>
+        <div id="createdCodeDisplay" style="font-size:28px;font-weight:700;font-family:'Courier New',monospace;letter-spacing:3px;color:var(--wine);background:var(--cream-warm);padding:16px 24px;border-radius:10px;border:2px dashed var(--gold);margin-bottom:16px;user-select:all;">${code}</div>
+        <button onclick="navigator.clipboard.writeText('${code}').then(()=>{showToast('已复制到剪贴板');closeModal('codeCreatedModal')}).catch(()=>{const t=document.createElement('textarea');t.value='${code}';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('已复制到剪贴板');closeModal('codeCreatedModal')})" style="width:100%;padding:12px;background:var(--wine);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:1px;">📋 复制邀请码</button>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn" onclick="closeModal('codeCreatedModal')">关闭</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function deleteCode(code) {
+  if (!confirm(`确定要删除邀请码 ${code} 吗？`)) return;
+  delete INVITE_CODES[code];
+  saveInviteCodes();
+  refreshAdminTable();
+  showToast('已删除');
+}
+
+function unbindDevice(code) {
+  if (!INVITE_CODES[code]) return;
+  if (!confirm(`确定要解绑邀请码 ${code} 的设备吗？解绑后该邀请码可在另一台新设备上使用。`)) return;
+  INVITE_CODES[code].boundDevice = '';
+  delete INVITE_CODES[code].boundDevice;
+  saveInviteCodes();
+  closeModal('addCodeModal');
+  refreshAdminTable();
+  showToast('已解绑设备');
+}
+
+function batchGenerateCodes() {
+  const count = parseInt(document.getElementById('batchCount').value) || 5;
+  const prefix = document.getElementById('batchPrefix').value.trim() || '同行';
+  const safeCount = Math.min(Math.max(count, 1), 50);
+
+  const existingNames = Object.values(INVITE_CODES).map(c => c.name);
+  let startNum = 1;
+  while (existingNames.includes(`${prefix}-${String(startNum).padStart(2,'0')}`)) {
+    startNum++;
+  }
+
+  for (let i = 0; i < safeCount; i++) {
+    const code = generateInviteCode();
+    const num = startNum + i;
+    // 计算30天后的到期日期
+    const expireDateObj = new Date();
+    expireDateObj.setDate(expireDateObj.getDate() + 30);
+    const expireDateStr = `${expireDateObj.getFullYear()}-${String(expireDateObj.getMonth()+1).padStart(2,'0')}-${String(expireDateObj.getDate()).padStart(2,'0')}`;
+
+    INVITE_CODES[code] = {
+      name: `${prefix}-${String(num).padStart(2,'0')}`,
+      maxUses: 50,
+      expireDays: 30,
+      expireDate: expireDateStr,
+      uses: 0,
+      createdAt: todayStr()
+    };
+  }
+
+  saveInviteCodes();
+  refreshAdminTable();
+  showToast(`已批量生成 ${safeCount} 个邀请码`);
+}
+
+function logoutAdmin() {
+  localStorage.removeItem(STORAGE_KEYS.INVITE_SESSION);
+  location.reload();
+}
+
+function copyAllCodes() {
+  let text = '泽涛的台词智能体 - 邀请码列表\n\n';
+  Object.entries(INVITE_CODES).forEach(([code, info]) => {
+    const uses = info.maxUses > 0 ? `（${info.uses}/${info.maxUses}次）` : `（已用${info.uses}次）`;
+    let expire = '永久';
+    if (info.expireDate) { expire = `至${info.expireDate}`; }
+    else if (info.expireDays > 0) { expire = `${info.expireDays}天`; }
+    text += `${code}  -  ${info.name}  -  ${expire} ${uses}\n`;
+  });
+  text += '\n管理员码：' + ADMIN_CODE;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('已复制到剪贴板');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('已复制到剪贴板');
+  });
+}
+
+// ============== 金句库（精选） ==============
+const goldenSayings = {
+  // 相遇缘分
+  fate: [
+    "斯人若彩虹，遇上方知有。",
+    "原来这世上真的有那么一个人，他一出现，你就知道，就是他了。",
+    "所有的不期而遇，都是命中注定。",
+    "于千万人之中遇见你所要遇见的人，于千万年之中，时间的无涯的荒野里，没有早一步，也没有晚一步，刚巧赶上了。",
+    "遇见你之前，我没想过结婚；遇见你之后，结婚我没想过别人。",
+    "世间所有的相遇，都是久别重逢。",
+    "原来真的有人，素未谋面，却爱你至深。",
+    "你是我平淡岁月里的星辰大海。",
+    "最好的相遇，是久别重逢。",
+    "缘分这件事，能不负对方就好，想不负此生，真的很难。",
+    "世界这么大，人生这么长，总会有这么一个人，让你想要温柔地对待。",
+    "第一次见你的时候，没想到后来会这么喜欢你。",
+    "你是我藏在微风里的欢喜。",
+    "风很温柔，花很浪漫，你很特别，我很喜欢。",
+    "总有人，山高路远，为你而来。"
+  ],
+  // 爱情感悟
+  love: [
+    "好的爱情，是两个独立的人，并肩站在一起，看看这个落寞的人间。",
+    "爱情不是每天都有惊喜，而是有一个人，一直记得那些对你重要的小事。",
+    "爱一个人不是改变她，而是理解她，然后陪她成为更好的自己。",
+    "喜欢是乍见之欢，爱是久处不厌。",
+    "真正的爱情，是在你最狼狈的时候，他依然觉得你最美。",
+    "爱情最好的模样，是你在闹，他在笑。",
+    "深情不及久伴，厚爱无需多言。",
+    "愿有岁月可回首，且以深情共白头。",
+    "最好的爱情，是势均力敌。",
+    "你不用多好，我喜欢就好；我没有很好，你不嫌弃就好。",
+    "爱情是理解，不是改变；是支持，不是控制。",
+    "在遇见你之前，我从未想过结婚；遇见你之后，我从未想过和别人结婚。",
+    "爱是藏不住的，闭上嘴巴，眼睛也会说出来。",
+    "最浪漫的事，就是和你一起慢慢变老。",
+    "爱情不是轰轰烈烈的誓言，而是平平淡淡的陪伴。",
+    "你是我一生只会遇见一次的惊喜。",
+    "所谓爱情，就是有那么一个人，可以轻易控制你的情绪，前一刻让你哭，下一刻又让你笑。",
+    "真正的爱，是我见过你所有的样子，依然选择和你在一起。"
+  ],
+  // 陪伴长情
+  companion: [
+    "陪伴是最长情的告白。",
+    "细水长流的日子里，有你在，就是最好的时光。",
+    "一屋两人，三餐四季，有你足矣。",
+    "愿得一人心，白首不分离。",
+    "执子之手，与子偕老。",
+    "人间烟火气，最抚凡人心。",
+    "柴米油盐的日子里，藏着最真实的幸福。",
+    "往后余生，风雪是你，平淡是你，清贫是你，荣华是你，心底温柔是你，目光所至也是你。",
+    "我能想到最浪漫的事，就是和你一起慢慢变老。",
+    "从青丝到白发，从年少到迟暮，有你在身边，就是最好的人生。",
+    "最长情的告白，是我一直在。",
+    "平淡岁月里的温柔，最是动人。",
+    "两个人一起过日子，比什么都重要。",
+    "愿你我，既有初见时的心动，也有相守时的心安。",
+    "真正的幸福，是有人问你粥可温，有人与你立黄昏。"
+  ],
+  // 婚姻未来
+  marriage: [
+    "婚姻不是两个人的加法，而是两个世界的乘法。",
+    "好的婚姻，是两个人一起成长，而不是一个人委屈求全。",
+    "婚姻是一场合作，更是一场修行。",
+    "愿你们的婚姻，既有爱情的浪漫，也有烟火的温暖。",
+    "从此有人问你粥可温，有人与你立黄昏。",
+    "愿有岁月可回首，且以深情共白头。",
+    "婚姻最好的状态，是你中有我，我中有你，却又各自独立。",
+    "两个人在一起，不是为了改变彼此，而是为了一起成为更好的人。",
+    "愿你们的婚姻，如诗如画，如歌如梦。",
+    "婚姻是一场漫长的旅行，愿你们一路风景，一路歌声。",
+    "好的婚姻，是互相成就，而不是互相消耗。",
+    "从此，一屋两人，三餐四季，皆是你。",
+    "婚姻不是终点，而是两个人新的起点。",
+    "愿你们，冷暖有相知，喜乐有分享，同量天地宽，共度日月长。",
+    "最好的婚姻，是你很好，我也不差。"
+  ],
+  // 双向奔赴
+  mutual: [
+    "双向奔赴的爱情，才有意义。",
+    "好的爱情，从来不是一个人的独角戏。",
+    "你走向我，我走向你，然后我们一起走向未来。",
+    "爱是相互的，你对我好，我对你更好。",
+    "最好的爱情，是势均力敌，是旗鼓相当。",
+    "你懂我的奇奇怪怪，我懂你的可可爱爱。",
+    "两个人互相惦记的日子，才有意义。",
+    "你是我的满心欢喜，我是你的怦然心动。",
+    "愿我们，彼此成就，互为星辰。",
+    "喜欢你的人很多，但只有我，愿意陪你走到底。",
+    "好的关系，是互相滋养，共同成长。",
+    "你给我偏爱，我给你心安。",
+    "爱情里最好的模样，是我们都在认真地爱着对方。",
+    "你是我的港湾，我是你的归途。",
+    "互相迁就才能长久，双向奔赴才有意义。"
+  ],
+  // 温柔治愈
+  gentle: [
+    "你是我疲惫生活里的英雄梦想。",
+    "有你在的地方，就是家。",
+    "你是我藏在心底的温柔。",
+    "世界很吵，有你就好。",
+    "你是我人生路上最温暖的光。",
+    "心安之处，即是吾乡。",
+    "有你的每一天，都值得被珍藏。",
+    "你是我风雨里的伞，也是我阳光下的花。",
+    "愿你被这个世界温柔以待，而我，就是那个温柔。",
+    "你的出现，让我所有的等待都有了意义。",
+    "有你在，我就什么都不怕。",
+    "你是我平凡生活里的英雄梦想。",
+    "遇见你之后，我再也没有羡慕过别人。",
+    "你是我心底最柔软的角落。",
+    "愿你所有的不安，都能找到归宿。"
+  ],
+  // 青春校园
+  youth: [
+    "从校服到婚纱，从青涩到成熟，你一直都在。",
+    "学生时代的喜欢，最是纯粹。",
+    "那年夏天，风遇见云，花遇见树，我遇见你。",
+    "青春里的那个人，终究成了枕边人。",
+    "从青涩少年到白发苍苍，你是我唯一的答案。",
+    "最好的时光，是和你一起走过的青春。",
+    "校园里的夕阳，见证了我们最初的心动。",
+    "从同桌到同床，从校服到婚纱。",
+    "那些年错过的大雨，那些年错过的爱情，今天终于补回来了。",
+    "青春是一本太仓促的书，而你，是书里最美的篇章。",
+    "从教室到教堂，从校服到婚纱，谢谢你，陪我从青春到余生。",
+    "学生时代的喜欢，是藏在课本里的秘密。",
+    "那年阳光正好，你穿了一件我喜欢的白衬衫。",
+    "青春里的白月光，终成了枕边人。",
+    "从青涩到成熟，从校园到婚姻，我们用了整个青春。"
+  ]
+};
+
+// ============== 工具函数 ==============
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickN(arr, n) {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+function getVal(id) {
+  return document.getElementById(id).value.trim();
+}
+
+// ============== 开场白生成（三段式） ==============
+function generateOpening(info, style) {
+  const { groomName, brideName, groomJob, brideJob, meetWay, meetTime, firstImpression, turningPoint, smallDetail } = info;
+
+  let golden_fate = pick(goldenSayings.fate);
+  let golden_love = pick(goldenSayings.love);
+  let golden_companion = pick(goldenSayings.companion);
+
+  // 第一段：逻辑填空
+  let para1 = "";
+  if (style === 'justright') {
+    para1 = `今天是${meetTime ? meetTime + '之后的某一天，' : ''}${groomName}和${brideName}的婚礼。\n\n${groomJob ? groomName + '是一名' + groomJob + '，' : ''}${brideJob ? brideName + '是一名' + brideJob + '。' : ''}\n他们${meetWay ? '在' + meetWay + '上认识的' : '认识了很多年'}。`;
+  } else if (style === 'emotional') {
+    para1 = `欢迎各位，来参加${groomName}和${brideName}的婚礼。\n\n${groomName}和${brideName}，${meetTime ? meetTime + '前' : ''}在${meetWay || '一次偶然的机会'}中相遇。\n${groomJob ? groomName + '从事' + groomJob + '工作，' : ''}${brideJob ? brideName + '是一位' + brideJob + '。' : ''}`;
+  } else if (style === 'wonderful') {
+    para1 = `有时候觉得，缘分真的很奇妙。\n\n${meetTime || '很多年前'}，${groomName}和${brideName}在${meetWay || '人海中'}相遇了。\n${groomJob ? '一个是' + groomJob + '，' : ''}${brideJob ? '一个是' + brideJob + '。' : ''}\n谁也没想到，后来的故事，会这么精彩。`;
+  } else {
+    para1 = `${groomName}和${brideName}的故事，${meetTime ? '从' + meetTime + '开始。' : '从很久很久以前开始。'}\n\n他们在${meetWay || '最美好的年纪'}相遇。\n${groomJob ? groomName + '是' + groomJob + '，' : ''}${brideJob ? brideName + '是' + brideJob + '。' : ''}`;
+  }
+
+  // 第二段：三个故事（初期/中期/最近）
+  let story1 = firstImpression || `刚开始的时候，两个人对彼此的印象都很普通。`;
+  let story2 = turningPoint || `后来发生了很多事，他们慢慢发现，对方就是自己要找的那个人。`;
+  let story3 = smallDetail || `再后来，他们的生活里全是对方的影子。`;
+
+  let para2 = `刚认识的时候，${story1}\n\n${story2}\n\n${story3}`;
+
+  // 第三段：金句收尾 + 万能结尾
+  let goldenLine = "";
+  if (style === 'justright') {
+    goldenLine = `${golden_companion}`;
+  } else if (style === 'emotional') {
+    goldenLine = `${golden_love}`;
+  } else if (style === 'wonderful') {
+    goldenLine = `${golden_fate}`;
+  } else {
+    goldenLine = `${pick(goldenSayings.youth)}`;
+  }
+
+  let para3 = `<span class="golden">${goldenLine}</span>\n\n今天，他们站在这里，准备好，要一起走向未来了。\n\n接下来，让我们用最热烈的掌声，有请今天最帅气的新郎——${groomName}，登场。`;
+
+  return para1 + "\n\n" + para2 + "\n\n" + para3;
+}
+
+// ============== 新郎入场 ==============
+function generateGroomEntrance(info, style) {
+  const { groomName } = info;
+  const lines = [
+    `各位，掌声不要停。让我们用最最热烈的掌声，有请今天最幸福的男人——${groomName}，登场！`,
+    `来，掌声再热烈一点！有请新郎${groomName}，走向属于他的舞台！`,
+    `准备好了吗？让我们一起喊出他的名字——${groomName}！`
+  ];
+  return pick(lines);
+}
+
+// ============== 新娘入场 ==============
+function generateBrideEntrance(info, style) {
+  const { brideName, groomName, turningPoint, meetWay } = info;
+
+  // 五个逻辑选一个：成长创业 / 还原刚恋爱 / 新娘为新郎做 / 新郎为新娘做 / 共同完成
+  let leadIn = "";
+  if (turningPoint && turningPoint.includes("陪")) {
+    leadIn = `${groomName}常说，遇见${brideName}之后，他才知道什么叫做"被一个人坚定地选择"。\n\n${turningPoint.split('。')[0]}。\n\n那时候他就告诉自己，这个女孩，他要守护一辈子。`;
+  } else if (meetWay) {
+    leadIn = `还记得${meetWay}上第一次见面的时候吗？\n\n那时候的${groomName}，怎么也不会想到，眼前这个女孩，会成为他一生的伴侣。`;
+  } else {
+    leadIn = `${groomName}说，他这辈子做过最正确的决定，就是娶了${brideName}。`;
+  }
+
+  let golden = pick(goldenSayings.fate);
+
+  return `${leadIn}\n\n<span class="golden">${golden}</span>\n\n各位，请起身。\n\n让我们用最最热烈的掌声，有请今天最美的新娘——${brideName}，入场！`;
+}
+
+// ============== 交接 ==============
+function generateHandover(info, style) {
+  const { brideName, groomName } = info;
+  return `叔叔，您面前的这个男人，他叫${groomName}。\n\n他可能不是最完美的，但他一定会用他的方式，去疼爱您的女儿。\n\n今天，您要把宝贝女儿的手，交到他的手上了。\n\n如果您信任他，如果您放心，就请您把女儿的手，交到他的手里吧。\n\n来，给爸爸一个拥抱。谢谢您，您辛苦了。`;
+}
+
+// ============== 问世 ==============
+function generateVows(info, style) {
+  const { groomName, brideName } = info;
+  return `${groomName}，看着你面前的${brideName}。\n\n从今天开始，你就是她的丈夫了。\n\n无论贫穷还是富有，健康还是疾病，顺境还是逆境，你都愿意爱她、照顾她、陪伴她，一生一世，不离不弃。\n\n你愿意吗？\n\n（新郎：我愿意）\n\n${brideName}，看着你面前的${groomName}。\n\n从今天开始，你就是他的妻子了。\n\n无论贫穷还是富有，健康还是疾病，顺境还是逆境，你都愿意爱他、理解他、支持他，一生一世，不离不弃。\n\n你愿意吗？\n\n（新娘：我愿意）`;
+}
+
+// ============== 交换戒指 ==============
+function generateRings(info, style) {
+  const { groomName, brideName } = info;
+  let golden = pick(goldenSayings.mutual);
+  return `接下来，请你们为彼此戴上这枚戒指。\n\n这枚戒指，是一个圆，没有起点，也没有终点。\n\n它代表着，你们的爱，永无止境。\n\n<span class="golden">${golden}</span>\n\n${groomName}，请以丈夫的名义，为你的妻子戴上这枚戒指。\n\n${brideName}，请以妻子的名义，为你的丈夫戴上这枚戒指。\n\n戴好了吗？\n\n来，${groomName}，张开你的臂膀，去拥抱你美丽的新娘吧！`;
+}
+
+// ============== 父母入场 / 代讲 ==============
+function generateParents(info, style) {
+  const { groomName, brideName } = info;
+  return `今天，最开心的，除了两位新人，还有他们的爸爸妈妈。\n\n接下来，让我们用热烈的掌声，有请双方父母，隆重登场！\n\n——\n\n（父母上台后）\n\n今天，爸爸妈妈有很多话想说。但是千言万语，汇成三句话——\n\n第一句，感谢。感谢各位亲朋好友，在百忙之中，来参加孩子们的婚礼。\n\n第二句，祝福。祝福两个孩子，从今往后，和和美美，幸幸福福。\n\n第三句，叮嘱。${groomName}、${brideName}，以后的日子，要互相照顾，互相体谅，好好过日子。\n\n来，给爸爸妈妈一个拥抱。谢谢你们，你们辛苦了。`;
+}
+
+// ============== 结束语 ==============
+function generateClosing(info, style) {
+  const { groomName, brideName } = info;
+  let golden = pick(goldenSayings.marriage);
+  let golden2 = pick(goldenSayings.companion);
+
+  return `各位，婚礼到这里，就接近尾声了。\n\n<span class="golden">${golden}</span>\n\n<span class="golden">${golden2}</span>\n\n${groomName}、${brideName}，从今往后，一屋两人，三餐四季，都是你们。\n\n愿你们，冷暖有相知，喜乐有分享。\n\n同量天地宽，共度日月长。\n\n我宣布，${groomName}先生、${brideName}小姐，新婚大典，礼成！\n\n让我们再一次，用最热烈的掌声，祝福他们！\n\n也请各位，入席就坐，享用今天的美酒佳肴。\n\n谢谢大家！`;
+}
+
+// ============== 主生成函数 ==============
+function generateSpeech() {
+  const info = {
+    groomName: getVal('groomName') || '新郎',
+    brideName: getVal('brideName') || '新娘',
+    groomJob: getVal('groomJob'),
+    brideJob: getVal('brideJob'),
+    meetWay: getVal('meetWay'),
+    meetTime: getVal('meetTime'),
+    firstImpression: getVal('firstImpression'),
+    turningPoint: getVal('turningPoint'),
+    smallDetail: getVal('smallDetail'),
+    proposal: getVal('proposal')
+  };
+
+  const style = document.querySelector('.style-option.active').dataset.style;
+
+  const sections = [
+    { title: '开场白', content: generateOpening(info, style) },
+    { title: '新郎入场', content: generateGroomEntrance(info, style) },
+    { title: '新娘入场', content: generateBrideEntrance(info, style) },
+    { title: '交接仪式', content: generateHandover(info, style) },
+    { title: '问世 / 我愿意', content: generateVows(info, style) },
+    { title: '交换戒指', content: generateRings(info, style) },
+    { title: '父母入场 & 代讲', content: generateParents(info, style) },
+    { title: '结束语', content: generateClosing(info, style) }
+  ];
+
+  renderResult(sections, info);
+}
+
+// ============== 渲染结果 ==============
+function renderResult(sections, info) {
+  const container = document.getElementById('speechContent');
+  let html = '';
+
+  html += `<div style="text-align:center; margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--line-gold);">
+    <div style="font-family:'Noto Serif SC',serif; font-size:20px; font-weight:600; color:var(--wine); letter-spacing:4px; margin-bottom:6px;">
+      ${info.groomName} & ${info.brideName}
+    </div>
+    <div style="font-size:12px; color:var(--ink-light); letter-spacing:2px;">ZETAO AI CEREMONY SCRIPT</div>
+  </div>`;
+
+  sections.forEach((sec, i) => {
+    html += `
+      <div class="speech-section">
+        <div class="speech-section-title">
+          <span class="num">${i + 1}</span>
+          ${sec.title}
+        </div>
+        <div class="speech-text">${sec.content}</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// ============== 复制全文 ==============
+function copyAll() {
+  const sections = document.querySelectorAll('.speech-section');
+  if (sections.length === 0) return;
+
+  let text = '';
+  sections.forEach((sec, i) => {
+    const title = sec.querySelector('.speech-section-title').textContent.trim();
+    const content = sec.querySelector('.speech-text').innerText;
+    text += `【${title}】\n${content}\n\n`;
+  });
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('已复制到剪贴板');
+  }).catch(() => {
+    // fallback
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('已复制到剪贴板');
+  });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ============== 事件绑定 ==============
+document.addEventListener('DOMContentLoaded', function() {
+  // 加载邀请码数据
+  loadInviteCodes();
+
+  // 邀请码验证
+  if (!checkInvite()) {
+    document.getElementById('inviteBtn').addEventListener('click', verifyInvite);
+    document.getElementById('inviteCode').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') verifyInvite();
+    });
+  }
+
+  // 风格选择
+  document.querySelectorAll('.style-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+      document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // 生成按钮
+  document.getElementById('generateBtn').addEventListener('click', function() {
+    const btn = this;
+    const btnText = document.getElementById('btnText');
+    btnText.innerHTML = '<span class="loading"></span>生成中...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      generateSpeech();
+      // 保存到历史
+      const speechHtml = document.getElementById('speechContent').innerHTML;
+      saveHistory(speechHtml);
+      btnText.textContent = '生成完整台词稿';
+      btn.disabled = false;
+    }, 600);
+  });
+
+  // 换一版
+  document.getElementById('regenerateBtn').addEventListener('click', function() {
+    if (document.querySelectorAll('.speech-section').length > 0) {
+      generateSpeech();
+      const speechHtml = document.getElementById('speechContent').innerHTML;
+      saveHistory(speechHtml);
+      showToast('已刷新一版');
+    }
+  });
+
+  // 历史记录
+  document.getElementById('historyBtn').addEventListener('click', openHistoryModal);
+
+  // 复制
+  document.getElementById('copyBtn').addEventListener('click', copyAll);
+});
+</script>
+
+</body>
+</html>
